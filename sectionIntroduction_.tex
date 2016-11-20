@@ -1,0 +1,48 @@
+\section{Introduction}
+
+The sustained growth in processor core count, 
+combined with the need for low memory access latency, 
+leads almost inevitably to NUMA architectures.  
+These are multi-socket machines with local memory attached to each socket.
+The local memory may be rapidly accessed by cores that are associated with 
+that socket.
+Other non-local cores can access the memory remotely, although with increased
+latency.
+
+\cite{gaud15challenges} highlight the two performance challenges for NUMA systems, i.e.\ data locality and controller/bus congestion.
+Their study shows that for a set of HPC benchmarks, NUMA congestion is a more serious problem than locality.
+
+For full-heap garbage collection (GC), 
+NUMA architectures pose similar challenges. 
+While much previous GC research has focused on improving NUMA 
+\emph{locality} , by means of thread-local heaps
+(e.g.\ \cite{marlow11multicore}),
+object migration (e.g.\ \cite{tikir05numa} or
+message passing (e.g.\ \cite{gidra15numagic},
+there has been relatively little direct coverage of NUMA 
+\emph{congestion} caused by GC activity.
+
+In this work, we show that the number of 
+parallel threads used for full-heap GC has a significant impact on 
+runtime performance. GC throughput peaks at a threshold number of threads, 
+then throughput degrades when further threads are added to the GC threadpool. 
+We demonstrate this phenomenon for the HotSpot / OpenJDK parallel scavenge collector, on a range of real-world Java workloads.
+Further, we use hardware performance counter profiling data to 
+indicate how the performance anomaly is directly related to NUMA congestion.
+
+There has been some anecdotal discussion about 
+performance pathologies associated with high GC 
+thread counts on NUMA runtimes\footnote{
+\url{http://stackoverflow.com/questions/18761351/very-high-gc-thread-count-in-a-servergc-app}}.
+However to the best of our knowledge, the analysis we present is the 
+first time that this relationship between NUMA congestion 
+and GC throughput has been explored in depth.
+
+We show that the optimum number of GC threads for NUMA execution is
+workload-dependent, ranging from 8 to 19 threads on a 32-core machine.
+We argue that the optimum number of threads may 
+vary dynamically during application execution.
+In light of this, we propose a runtime search-based optimization 
+technique to adapt the size of the GC thread pool for 
+JVM execution on NUMA architectures.
+This adaptive GC technique produces up to 20\% application performance improvement over default HotSpot on real-world Java workloads.

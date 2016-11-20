@@ -1,0 +1,24 @@
+\section{Experimental Framework}
+\label{sec:exp_framework}
+
+Our experimental platform has four AMD Opteron 6366 processors;
+each processor consists of a pair of dies, each with eight cores.
+Therefore we have a total of 64 cores in the system.
+Each core is clocked at 1.8 GHz.
+Every die integrates a memory controller.
+Therefore, each processor supports two NUMA nodes and the system has eight NUMA nodes in total.
+A memory bank of 64GB is attached to each NUMA node and the overall system memory size is 512GB. 
+Cores on each die share a 16MB L3 cache.
+The processors are connected via four HyperTransport 3.1 links with a speed of 3.2 GHz and a throughput of 6.40 GT/s per link.
+The machine runs Linux 3.11.4 64-bit kernel.
+
+We use the Linux \texttt{numactl} tool to manage NUMA policies.
+A NUMA policy can be set on the command line and it affects 
+all children of that process.
+For example, we bind process resources (CPUs and memory) to four nodes
+(32 cores)
+only with this command: \texttt{numactl --cpunodebind=1,3,4,6 --membind=1,3,4,6}.  
+We use this 32-core configuration for all experiments reported in this paper,
+since Likwid does not work with 64 cores due to hardware counter limitations.
+Table \ref{tab:latency} shows the relative memory access latencies for 
+traffic between these four nodes.

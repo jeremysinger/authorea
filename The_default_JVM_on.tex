@@ -1,0 +1,18 @@
+The default JVM, on which all our performance measurements are based,
+is OpenJDK 8 jdk8u40-b06, hg version 77f55b2e43ae. %Sep, 2014.
+
+We use a variety of memory-intensive Java application workloads. 
+The benchmarks are outlined below.
+We execute the benchmarks in near-minimal fixed heap sizes, see
+Table \ref{tab:heapsizes}.
+
+\begin{enumerate}
+\item[]\textbf{Neo4j/LiveJournal}: Neo4j is an embedded, disk-based, fully transactional Java persistence engine that stores data structures in graphs instead of tables \cite{Neo4j}.
+The graph nodes and relationships are represented in the JVM heap.
+We use the LiveJournal social network data set, which consists of around 5 million nodes and 68 million edges \cite{snapnets}.
+Our representative Java workload embeds Neo4j 2.2.1 as a library and queries the LiveJournal graph to find all possible paths between two randomly selected nodes.
+The program uses 32 threads to drive the workload and has a typical 30GB heap size.
+The all-paths query is repeated twice and the total execution time is reported.
+\item[]\textbf{DaCapo 9.12}: The DaCapo benchmarks are real-world, open-source Java applications with canonical input data sets. We execute applications from the DaCapo 9.12 suite \cite{blackburn06dacapo} that are compatible with JDK8, namely: avrora, pmd, xalan, sunflow, h2, lusearch, and jython.
+%%The heap size for each program is fixed and the input size is large.
+\end{enumerate}

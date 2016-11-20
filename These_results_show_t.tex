@@ -1,0 +1,15 @@
+These results show that there is a definite turning point on each graph---if 
+the number of GC threads increases beyond a threshold value, then GC 
+performance degrades. 
+We may observe that this threshold value is \emph{different}
+for minor and major GCs, and for different benchmarks. 
+The value may even vary during different phases of execution, although
+we do not measure this.
+
+We use the Likwid \cite{treibig10likwid} profiling tool
+to measure hardware performance counters related to NUMA traffic.
+Figure \ref{fig:congestion:likwid} shows the absolute counter values for
+complete executions of the benchmarks, with fixed numbers of
+GC threads. In some cases (particularly jython and pmd) it is possible 
+to see clear minima in NUMA traffic, indicating 
+configuration sweet-spots in terms of the number of GC threads.

@@ -1,0 +1,10 @@
+We evaluate this static optimum GC thread configuration, by patching the JVM
+to allow different fixed thread settings for minor and major GC.
+Then we compare the computed static optimum configuration against default
+HotSpot adaptive behavior.
+Figure \ref{fig:staticopt:compare:gc} shows the GC time for various
+workloads with these policies. In all cases, the static optimum GC configuration
+is significantly better than the HotSpot default configuration.
+Figure \ref{fig:staticopt:compare:vm} shows the overall application
+execution time for the same workloads. 
+In the majority of cases, the static optimum GC configuration leads to significantly better execution times than the HotSpot default configuration.

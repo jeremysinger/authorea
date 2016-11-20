@@ -1,0 +1,24 @@
+\section{Adaptive Thread Pool Optimization}
+\label{sec:dynamicopt}
+
+This section addresses RQ3.
+
+The optimum number of GC threads may vary during execution, e.g.\ 
+if a program goes through phase changes, or if several distinct programs
+are chained together.
+
+We apply a simple search-based optimization approach called 
+\emph{gradient descent} ---although with the throughput curves we use, we are
+actually performing gradient \emph{ascent}
+The basic intuition is that, at a point $x$, we change the number of threads
+in a way that is proportional to the gradient of the throughput curve at $x$.
+In this way, we approach the local maximum for the throughput curve.
+Figure \ref{fig:dynopt:algorithm} outlines the gradient ascent algorithm we
+use.
+The parameter $\epsilon$ specifies the sensitivity threshold below
+which any differences are considered to be noise.
+The parameter $\alpha$ is the amount by which the gradient is multiplied.
+This value must be set carefully---if $\alpha$ is too small then the optimization takes a long time to converge, but if $\alpha$ is too large then the
+optimization overshoots the maximum point.
+In all our experiments, we use the values $\alpha = 0.05$ and $\epsilon = 25$.
+As before, we apply the optimization concurrently but separately for minor and major GC threads.

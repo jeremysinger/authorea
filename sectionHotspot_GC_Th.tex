@@ -1,0 +1,19 @@
+\section{Hotspot GC Thread Management}
+
+The Hotspot JVM allows the user to set the number of parallel GC threads
+via a command-line parameter\footnote{\url{http://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html}}.
+When the number of GC threads is set explicitly at VM startup in this way,
+the number of GC threads remains \emph{constant} throughout every GC cycle, 
+for both minor and major collections.
+
+HotSpot also has support for \emph{adaptive} GC thread management.
+This policy changes the number of GC threads, if required, at every GC cycle.
+Anecdotally, common practice reveals that engaging the full system resources to the garbage collection yields suboptimal performance\footnote{
+\url{http://mail.openjdk.java.net/pipermail/hotspot-gc-dev/2009-January/000718.html}}.
+Therefore, the Hotspot JVM sets a maximum number of collection threads $M$ using the following equation:
+
+\begin{equation}
+M = 8 + \big((P-8) * \frac{5}{8}\big)
+\end{equation}
+where $P$ is the number of processors.
+For example, if a system has 32 cores then the maximum number of GC threads is 23.

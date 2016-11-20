@@ -1,0 +1,22 @@
+The adaptive policy manages the number of GC threads 
+at every collection cycle using two key factors.
+There is a heuristic assumption that the number of GC threads should be
+at least double the number of mutator threads, $T_\mathrm{mutator}$.
+Further, a GC thread should process 64MB of data on average.
+Consequently, the initial number of GC threads $T_\mathrm{GC}^0$
+is calculated as:
+
+\begin{equation}
+T_\mathrm{GC}^0 = \mathrm{max} \big( 2T_\mathrm{mutator}, \frac{\mathrm{heapsize}}{64MB} \big)
+\end{equation}
+For subsequent GCs, we also consider the number of GC threads at the previous GC. The number of threads for the $n$th GC, $T_\mathrm{GC}^n$ is
+calculated as:
+
+\begin{equation}
+T_\mathrm{GC}^n = \frac{\mathrm{max} \big( 2T_\mathrm{mutator}, \frac{\mathrm{heapsize}}{64MB} \big) + T_\mathrm{GC}^{n-1}}{2}
+\end{equation}
+The rate of change in GC thread count is asymmetric.
+When the runtime decides to increase the number of threads, it does so 
+instantly. 
+However, decreasing the number of GC threads is done gradually.
+Figure \ref{fig:policy} shows the adaptive policy schematically.

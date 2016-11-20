@@ -1,0 +1,21 @@
+\section{Threats to Validity}
+\label{sec:threats}
+
+We see two main threats to the validity of our experiments.
+
+\subsection{Lack of Generality}
+We only perform experiments on one NUMA system. We only use a single 
+virtual machine implementation.
+It is possible that these empirical behaviors might be artifacts of the
+evaluation platform. To mitigate this, it is necessary to perform
+the same experiments on other platforms and compare the results.
+We consider our range of benchmarks to be representative
+and moderately broad.
+
+\subsection{Causality}
+The observed NUMA congestion issue might be caused by an underlying
+problem, e.g.\ contended memory manager locks.
+We could test this by repeating our experiments with another JVM implementation,
+or another language runtime.
+Further, we could check to see whether HotSpot has similar multi-threading 
+GC performance issues on multicore UMA platforms.

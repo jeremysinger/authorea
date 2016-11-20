@@ -1,0 +1,24 @@
+\section{Conclusions}
+\label{sec:concl}
+
+In the same way that JVM heap size is subject to a 
+complex dynamic tuning system based on 
+feedback control, we argue that the number of GC threads should 
+have a similar runtime tuning system.
+
+We have shown that the number of GC threads has a significant impact on
+application performance. NUMA machines are particularly sensitive to GC 
+multi-threading, due to NUMA congestion issues.
+We observe that the optimum number of GC threads varies by GC type and
+application workload.
+We have shown the potential for adaptive tuning using a simple search-based
+optimization technique.
+
+The final version of this paper will include a link to a github repo with
+code and data for our experiments.
+
+\acks
+
+Removed for blind review.
+
+\bibliographystyle{ACM-Reference-Format-Journals}

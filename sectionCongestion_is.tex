@@ -1,0 +1,17 @@
+\section{Congestion is a Problem}
+\label{sec:congestion}
+
+This section addresses RQ1.
+
+For each workload, we measure GC throughput using a fixed number of 
+GC threads.
+Throughput is calculated as size of collected heap space divided by wall clock time of GC.
+For each (workload, GC threads) combination, we take 20 measurements and
+report arithmetic mean. All error bars on graphs show one standard deviation 
+either side of the mean.
+We measure minor and major GC throughputs separately, since they have entirely
+different characteristics. The minor GC is a copying collector, whereas the
+major GC is compacting mark/sweep.
+Figures \ref{fig:congestion:minorgc} and \ref{fig:congestion:majorgc}
+show throughputs for minor and major GC respectively, when the JVM is
+configured to run on 32 cores.

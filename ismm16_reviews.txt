@@ -1,0 +1,87 @@
+===========================================================================
+                            ISMM'16 Review #20A
+---------------------------------------------------------------------------
+      Paper #20: NUMA-Aware Thread Management for Garbage Collection
+---------------------------------------------------------------------------
+
+                      Overall merit: 2. Weak reject
+                 Reviewer expertise: 4. Expert
+
+                         ===== Paper summary =====
+
+This paper presents a dynamic technique to adjust the number of GC threads during execution of a Java application to improve GC time or throughput on a NUMA machine.  They first vary the number of GC threads, and find differences in the throughput based on the number of GC threads, both during minor and major collections.  They then use these measurements to test a statically-optimal technique that sets the number of threads (separately for major and minor GCs) in order to achieve better GC time or throughput than the default technique.  Finally they have an adaptive technique that changes the number of GC threads based on the history of both the number of threads and throughput achieved using a gradient descent algorithm.
+
+                      ===== Comments for author =====
+
+While I think it's very interesting to study the effect of the number of GC threads on performance on a NUMA machine, I don't think this paper does what it sets out to do.  The paper does not properly study the congestion on a NUMA machine.  Although one graph measures congestion, this data is not linked to garbage collection in particular.  It's not clear that varying the number of GC threads is really the main cause of congestion, or that congestion is even a problem.  The paper does not re-measure congestion with the adaptive technique, and show that the adaptive technique really does lower congestion levels.
+
+While the paper presents Neo4j as a benchmark, there are no results presented with that benchmark.  The DaCapo benchmarks, while good, do not have very large memory footprints to run on such a large NUMA machine.  
+
+In Section 4, the paper says you use "near-minimal heap sizes" - how did you choose these heap sizes?
+
+In Section 5, I don't agree with the conclusion.  You present graphs showing the throughput of GC as it varies with the number of GC threads, and then you present congestion graphs, but you have not correlated the data at all.  It's not clear that congestion correlates with (or is caused by) the number of GC threads.  I think you have shown that throughput varies with the number of GC threads, and that adding more threads is not always better, but that was already known.  Also, are these results reproducable? 
+
+Why is lusearch not shown in Figure 2?
+
+In Section 6, it is not clear why you need to do curve fitting.  You can just pick the minimum on all of the graphs in Figures 2 and 3, and use that to choose the static optimal.  Why does Figure 6 present GC time instead of throughput?   Are you optimizing for throughput or time?  Figures 6 and 7  should have normalized results so the bars can be more easily compared.  And why does avrora in Figure 7 perform worse with static opt (and with your dynamic technique) than the default?   You should be able to explain your results.
+
+In Section 7, it is unclear what your algorithm does.  Do you use the same data used in the static optimal case (gathered from the previous runs) to see the gradient of the curve?  Or do you just take the last 2 GCs, for example, to decide on the optimal value for the next GC?   And how did you decide what epsilon and alpha should be?  You should at least argue that these are reasonable values, if not provide experiments varying these values.  
+
+If, as the paper implies, lusearch benefits from the dynamic technique because it has more phase behavior, you should show lusearch in Figure 9.  From the graphs there, it's hard to know what to conclude.  In fact, there is a lot of variety - a lot of ups and downs, and very sharp ones, which is surprising given your gradient algorithm.  I would not expect your technique to go up to 32 threads (as the default limits the number of GC threads to 23).    And why was network traffic not measured for your new dynamic technique?
+
+At the end of Section 9.2, the paper says "our approach allows threads to steal from local threads only", but the paper never mentions anything else about work-stealing or any techniques you use to limit this.  So this seems very random and not on topic.  Did you actually modify the work-stealing algorithm in the GC?  
+
+In the end, it seems like previous work (such as that by Gidra et al.) has done a lot more than this paper to actually reduce NUMA contention caused by the GC.  
+
+In conclusion, while I think this is an interesting topic, the contribution is small, and the experiments were not set up in a way to 1) prove the premise that too many GC threads actually cause the network congestion, and 2) prove that your simple dynamic technique to change the number of threads actually improves congestion.
+
+===========================================================================
+                            ISMM'16 Review #20B
+---------------------------------------------------------------------------
+      Paper #20: NUMA-Aware Thread Management for Garbage Collection
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Weak accept
+                 Reviewer expertise: 3. Knowledgeable
+
+                         ===== Paper summary =====
+
+
+This paper reports the results of experiments showing that using too many GC threads in a work-stealing parallel GC leads to contention-based slowdowns, and describes one strategy for arranging fewer threads.
+
+                      ===== Comments for author =====
+
+
+This work, and the paper are OK, but only only a small contribution on a narrow issue (as acknowledged in section 8 of paper).  Still, the results may be of interest to ISMM readers.
+
+There are a few (not enough) published results from the work-stealing parallelism literature illustrating the impact of too many threads trying to steal too little work. (One of the early Cilk papers included a figure showing less extreme case.)  I think the issue is known to most general-purpose work-stealing implementors.  The authors should chase down this related work and compare to the extent possible.
+
+The size estimation approach discussed in section 7 seems reasonable in the absence of other algorithmic control. But the paper should note that there are dynamic alternatives. Among them: rather than arranging fewer of them, threads could be made to more quickly block (and get out of each other's way) upon contention.
+
+===========================================================================
+                            ISMM'16 Review #20C
+---------------------------------------------------------------------------
+      Paper #20: NUMA-Aware Thread Management for Garbage Collection
+---------------------------------------------------------------------------
+
+                      Overall merit: 1. Reject
+                 Reviewer expertise: 3. Knowledgeable
+
+                         ===== Paper summary =====
+
+This paper asks three questions about GC performance on NUMA machines, all relating to whether our existing systems have the right approach to allocating threads to the collection task.  The conclusion is that both static and dynamic techniques for choosing thread can help, and NUMA interactions with GC threads can be quite negative.
+
+                      ===== Comments for author =====
+
+This paper is well organized, and clearly establishes the questions it explores.  However, it tends toward the shallow.  The conventional wisdom is that the answer to RQ1 is "yes", as evidenced by the referenced stackoverflow urls.  That being the case, the "proof by example" in the paper is only slightly more formal than what appears online.  It *is* valuable that the authors used Likwid to show that NUMA-GC interactions are to blame, and naturally this question is more of a motivation for what comes later.  However, RQ2 and RQ3 are not so obvious, and yet the answers to both are equally terse and shallow.
+
+Since the answers to the questions relied primarily on experimentation, my rebuttal questions are primarily focused there as well:
+
+- Why was Neo4j discussed, but never shown in any charts?  This is particularly important since most of the DaCapo benchmarks have heap sizes too small to really even be interesting on NUMA machines (280MB, 80MB, and then less).
+
+- Why was LUSearch absent from Figure 2?
+
+- The charts show that 8 threads was best for minor GCs, and that it was almost always best on major GCs.  That could be an indictment of the benchmarks, but it also begs the question: how would the static and dynamic policies compare to the policy "just use 8 threads"?
+
+- If possible, please give detail in the rebuttal about how the dynamic method was created.  How was it trained?  Was there a training application set and a test application set?  Was leave-one-out cross validation used?  How can we be sure that the "once per system" tuning isn't workload dependent?  Is it possibly over-trained to DaCapo?
+

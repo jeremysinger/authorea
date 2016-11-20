@@ -1,0 +1,13 @@
+The execution time results in Figures \ref{fig:staticopt:compare:gc} and 
+\ref{fig:staticopt:compare:vm} show that the dynamic selection of GC threads performs \emph{significantly better} than the HotSpot default. 
+Although the dynamic approach requires some tuning (for $\alpha$ and $\epsilon$) we do this once for the system, whereas static optimum requires 
+per-benchmark tuning.
+
+The gradient ascent approach is generally \emph{as good} as the static optimum technique.
+However note that for some programs (e.g.\ lusearch) the dynamic approach
+is \emph{significantly better}. This is likely to be the case when the 
+application goes through different phases within which there are large differences between the optimal number of GC threads.
+
+Figure \ref{fig:dynopt:illus} shows how the number of GC threads (for major and minor GCs) changes over time for several benchmarks.
+These are illustrative graphs, but they show the
+effective of the gradient ascent method. Note that the result returned from the gradient ascent approach is bounded in the range $[2,32]$.

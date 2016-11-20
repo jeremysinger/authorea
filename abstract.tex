@@ -1,0 +1,13 @@
+% what's the problem
+Selecting an appropriate number of threads for garbage collection is
+a non-trivial problem. Allocating all the hardware threads in the system to
+stop-the-world collection may not yield the best performance. On NUMA 
+systems, this may be due to congestion on the inter-node links.
+% why is it important
+Current state-of-the-art runtimes use simple static heuristics to 
+select the number of collection threads. We show that this is suboptimal in most cases on a typical NUMA platform.
+% what's the solution
+We show that the optimum number of threads varies by collection type and application workload. We argue that a dynamic optimization technique is appropriate
+to tune the number of threads during execution.
+% why is it better?
+We implement a simple gradient ascent optimization and show that it improves performance by up to 20\% on typical Java application workloads.

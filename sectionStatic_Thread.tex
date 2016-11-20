@@ -1,0 +1,19 @@
+\section{Static Thread Pool Optimization}
+\label{sec:staticopt}
+
+This section addresses RQ2.
+
+Based on the observed GC throughput behavior in the previous section,
+we think that optimization based on \emph{curve fitting} for GC throughput 
+is a possible technique.
+We will fit the curve $y = ax^2 + bx + c$ where 
+$y$ is GC throughput and 
+$x$ is number of GC threads.
+Figure \ref{fig:staticopt:h2} shows the fitted quadratic curves for 
+the Dacapo/h2 benchmark. We use SPSS to do the fitting.
+Once we have the parameters for the quadratic equation, we can 
+differentiate to compute the location of the turning point on the parabola.
+This indicates the statically optimum number of GC threads.
+Note that a single workload will have two optimum number of GC threads---one for minor and one for major GCs.
+Table \ref{tab:staticopt:values} gives the computed optimum values for the
+number of minor and major GC threads for each benchmark.

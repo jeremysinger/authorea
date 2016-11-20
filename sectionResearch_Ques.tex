@@ -1,0 +1,38 @@
+\section{Research Questions}
+\label{sec:rquestions}
+
+This section identifies the three research questions 
+that we aim to answer systematically and quantitatively in this
+study. The first question relates to the observed behavior of the 
+existing runtime platform. The final two questions relate to 
+performance optimization, based on our
+modifications to the runtime platform.
+
+\textbf{RQ1: Does GC multi-threading cause NUMA congestion?}
+
+Section \ref{sec:congestion} deals with RQ1.
+Production high-performance VMs feature parallel GC implementations.
+On NUMA machines, it is likely that heap regions are spread across 
+the NUMA nodes. GC threads will access memory from remote nodes.
+This can cause NUMA congestion, if inter-node data traffic
+bandwidth is too large.
+
+\textbf{RQ2: Does a statically optimum thread configuration improve GC performance significantly, in relation to the default configuration?}
+
+Section \ref{sec:staticopt} explores RQ2.
+In this study, we mean \emph{throughput} whenever we refer to performance.
+The default configuration is the out-of-the-box GC threading policy.
+Here, \emph{statically optimal} means we use an ahead-of-time tuning pass
+to determine the best configuration. This configuration may be specialized
+for the platform, for a particular benchmark and even for an
+input data set to that benchmark \cite{mao09influence}.
+
+\textbf{RQ3: Does an adaptive thread management policy 
+improve GC performance significantly, 
+in relation to the default configuration?}
+
+Section \ref{sec:dynamicopt} deals with RQ3.
+This question is similar to RQ2, except that we dynamically vary the
+GC configuration. We use a simple search-based optimization technique, 
+varying the number of GC threads at runtime to optimize 
+measured throughput.

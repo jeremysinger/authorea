@@ -1,0 +1,39 @@
+\section{Related Work}
+\label{sec:relw}
+
+\subsection{NUMA GC Characterization}
+
+\cite{sartor12exploring}
+study JVM performance for a two-socket NUMA machine. They experiment with running
+GC threads on one socket at a lower frequency than application threads on the 
+other socket. In general, they find that there can be fewer GC threads than application threads, although they do not expose NUMA congestion as the 
+underlying reason for this.
+
+\subsection{Causes of Congestion}
+
+Gidra et. al \cite{Gidra2013} analyzed the OpenJDK Parallel Scavenge GC for parallelism bottlenecks and pinpointed several contended data structures. They propose several modifications to reduce contention (and corresponding NUMA congestion).
+
+\cite{iyengar2012scalable} study the scalability of the marking phase of the C4 algorithm \cite{Tene2011}.
+They report that the duty cycles of marking phase get worse as the number of threads increases.
+A primary source of this problem is the contention of work sharing in marking tasks, where multiple threads attempt to atomically update words in a side bitmap.
+The JVM allocates the bitmap data structure at the initialization phase and it is likely to reside in a single NUMA node.
+Therefore, the collector threads would saturate the bandwidth of that node.
+In addition, the cache line is big enough to accommodate multiple words; thus, false sharing would occur with high probability.
+
+GC work-stealing may also lead to congestion.
+\cite{gidra11assessing} remarks that disabling work-stealing improves program performance for some applications.
+\cite{Muddukrishna2013} suggest a locality-aware work-stealing algorithm, which calculates the distance between NUMA nodes in a system with multi-hop memory hierarchy.
+An idle thread on a node attempts to steal work from the `nearest' non-empty queues.
+\cite{Olivier2011} propose a hierarchical work-stealing algorithm to improve locality.
+They enable one third of running threads to steal work on behalf of other threads in the same chip and push stolen work into a shared queue for local threads.
+Our approach allows threads to steal from local threads only, to preserve NUMA locality.
+
+\subsection{Reducing Congestion}
+
+\cite{gidra15numagic} use message passing between local and remote GC 
+threads to prevent NUMA congestion.
+
+Locality improvement is the most common way to reduce congestion. This is
+achieved by thread-local heaps 
+\cite{marlow11multicore,domani02thread}. 
+Object migration may improve locality, but causes non-trivial inter-node traffic \cite{tikir05numa}.
