@@ -12,6 +12,7 @@ tab_heapsize.tex
 sectionCongestion_is.tex
 figures/minor1/minor1.png
 figures/avrora-major-t/avrora-major-t.png
+figures/major1/major1.png
 These_results_show_t.tex
 figures/avrora-prof/avrora-prof.png
 textbfFinding_1_Usin.tex
