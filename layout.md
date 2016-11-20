@@ -10,7 +10,6 @@ tab_latency.tex
 The_default_JVM_on.tex
 tab_heapsize.tex
 sectionCongestion_is.tex
-figures/avrora-minor-t/avrora-minor-t.png
 figures/minor1/minor1.png
 figures/avrora-major-t/avrora-major-t.png
 These_results_show_t.tex
