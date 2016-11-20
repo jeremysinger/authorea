@@ -13,6 +13,7 @@ sectionCongestion_is.tex
 figures/minor1/minor1.png
 figures/major1/major1.png
 These_results_show_t.tex
+figures/avrora-prof1/avrora-prof1.png
 textbfFinding_1_Usin.tex
 sectionStatic_Thread.tex
 tab_staticopt_values.tex
